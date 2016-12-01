@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Random;
 
@@ -13,6 +14,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import gww.lottery.bus.RxBus;
+import gww.lottery.restful.service.TestService;
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -71,8 +76,56 @@ public class MainActivity extends AppCompatActivity {
         });
     }
     private void initData() {
-
+        retrofitTest();
     }
+
+    private void retrofitTest() {
+
+        String url = "http://reactnative.cn";
+//        OkHttpClient client = new OkHttpClient();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(url)
+//                .client(client)
+                .addConverterFactory(GsonConverterFactory.create())
+//                .addConverterFactory()
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .build();
+        TestService testService = retrofit.create(TestService.class);
+/*        Call call = testService.getContent("getting-started.html");
+        call.enqueue(new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) {
+                Log.d(TAG, "retrofitTest: " + response);
+            }
+
+            @Override
+            public void onFailure(Call call, Throwable t) {
+                Log.d(TAG, "retrofitTest:  Failure");
+            }
+        });*/
+
+        Observable<String> observable = testService.getContentRx("getting-started.html");
+        observable.observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<String>() {
+            @Override
+            public void onCompleted() {
+                Log.d(TAG, "onCompleted: ");
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Log.d(TAG, "onError: ");
+                Toast.makeText(MainActivity.this, "Error", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onNext(String s) {
+                Log.d(TAG, "onNext: " + s);
+            }
+        });
+    }
+
+
 
     private void rxJavaTest() {
 
