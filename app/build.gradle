@@ -55,4 +55,7 @@ dependencies {
     //rxJava 基于观察者模式的异步通信机制，实现对象将通信的解耦
     compile 'io.reactivex:rxandroid:1.2.1'
     compile 'io.reactivex:rxjava:1.1.6'
+
+    //应用统计分析 渠道打包的目的是为了针对不同的市场，做一些统计，数据分析
+    compile 'com.umeng.analytics:analytics:latest.integration'
 }

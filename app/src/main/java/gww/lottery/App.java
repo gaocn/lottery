@@ -6,6 +6,9 @@ import android.util.Log;
 
 import com.litesuits.orm.LiteOrm;
 
+import gww.lottery.config.PropertiesManager;
+import gww.lottery.config.SharedPreferenceManager;
+
 /**
  * Created by 高文文 on 2016/12/1.
  */
@@ -28,6 +31,8 @@ public class App extends Application {
         Log.d(TAG, "onCreate: 应用程序上下文初始化");
         mContext = this;
         initLiteOrm();
+        PropertiesManager.getInstance().initialize(this);
+        SharedPreferenceManager.getInstance().initialize(this, "lottery", Context.MODE_PRIVATE);
         super.onCreate();
     }
 }

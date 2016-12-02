@@ -1,7 +1,7 @@
 package gww.lottery;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -13,7 +13,9 @@ import java.util.Random;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import gww.lottery.activities.base.BaseActivity;
 import gww.lottery.bus.RxBus;
+import gww.lottery.config.PropertiesManager;
 import gww.lottery.restful.service.TestService;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
@@ -25,7 +27,7 @@ import rx.functions.Action0;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
     private static final String TAG = "MainActivity";
     @BindView(R.id.btn_1)
     Button mBtn1;
@@ -60,6 +62,12 @@ public class MainActivity extends AppCompatActivity {
     public void onClick(View view) {
 //        OttoBus.getInstance().post("点我" + new Random().nextInt());
         RxBus.getInstance().post("点我" + new Random().nextInt());
+
+        Snackbar.make(view, "点我" + PropertiesManager.getInstance().getValue("url"), Snackbar.LENGTH_INDEFINITE)
+//                .setAction()
+                .show();
+
+
     }
 
 /*    @Subscribe
