@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 
+import com.facebook.stetho.Stetho;
 import com.litesuits.orm.LiteOrm;
 
 import gww.lottery.config.PropertiesManager;
@@ -33,6 +34,12 @@ public class App extends Application {
         initLiteOrm();
         PropertiesManager.getInstance().initialize(this);
         SharedPreferenceManager.getInstance().initialize(this, "lottery", Context.MODE_PRIVATE);
+
+        /**
+         * 开启网络请求查看: new OkHttpClient.Builder().addNetworkInterceptor(new StethoInterceptor()) .build()
+         */
+        Log.d(TAG, "onCreate: 初始化Stetho，可以通过Chrom查看应用布局，网络请求，sqlite，sharepreference");
+        Stetho.initializeWithDefaults(this);
         super.onCreate();
     }
 }

@@ -58,4 +58,8 @@ dependencies {
 
     //应用统计分析 渠道打包的目的是为了针对不同的市场，做一些统计，数据分析
     compile 'com.umeng.analytics:analytics:latest.integration'
+
+    //stetho  Stetho是一个Android应用的调试工具。当你的应用集成Stetho时，开发者可以访问Chrome，在Chrome Developer Tools中查看应用布局，网络请求，sqlite，preference等等
+    compile 'com.facebook.stetho:stetho:1.+'
+    compile 'com.facebook.stetho:stetho-okhttp3:1.+'
 }
