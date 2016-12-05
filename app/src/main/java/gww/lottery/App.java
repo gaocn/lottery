@@ -34,7 +34,7 @@ public class App extends Application {
         initLiteOrm();
         PropertiesManager.getInstance().initialize(this);
         SharedPreferenceManager.getInstance().initialize(this, "lottery", Context.MODE_PRIVATE);
-
+        BeanFactory.beanFactoryInit();
         /**
          * 开启网络请求查看: new OkHttpClient.Builder().addNetworkInterceptor(new StethoInterceptor()) .build()
          */

@@ -15,7 +15,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import gww.lottery.activities.base.BaseActivity;
 import gww.lottery.bus.RxBus;
-import gww.lottery.config.PropertiesManager;
+import gww.lottery.engine.UserEngine;
 import gww.lottery.restful.service.TestService;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
@@ -63,7 +63,9 @@ public class MainActivity extends BaseActivity {
 //        OttoBus.getInstance().post("点我" + new Random().nextInt());
         RxBus.getInstance().post("点我" + new Random().nextInt());
 
-        Snackbar.make(view, "点我" + PropertiesManager.getInstance().getValue("url"), Snackbar.LENGTH_INDEFINITE)
+        UserEngine userEngine = BeanFactory.getImpl(UserEngine.class);
+
+        Snackbar.make(view, "点我" + "\n" + userEngine.login(""), Snackbar.LENGTH_INDEFINITE)
 //                .setAction()
                 .show();
 
