@@ -40,6 +40,8 @@ public class App extends Application {
          */
         Log.d(TAG, "onCreate: 初始化Stetho，可以通过Chrom查看应用布局，网络请求，sqlite，sharepreference");
         Stetho.initializeWithDefaults(this);
+
+        LotteryRetrofit.init();
         super.onCreate();
     }
 }

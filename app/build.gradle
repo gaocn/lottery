@@ -49,6 +49,7 @@ dependencies {
     compile 'com.squareup.retrofit2:converter-protobuf:2.+'
     compile 'com.squareup.retrofit2:converter-scalars:2.+'
     compile 'com.squareup.retrofit2:adapter-rxjava:2.+'
+    compile 'com.squareup.okhttp3:logging-interceptor:3.+'
     //TODO 依赖有问题
 //    compile 'com.squareup.retrofit2:converter-simplexml:2.+'
 
@@ -62,4 +63,6 @@ dependencies {
     //stetho  Stetho是一个Android应用的调试工具。当你的应用集成Stetho时，开发者可以访问Chrome，在Chrome Developer Tools中查看应用布局，网络请求，sqlite，preference等等
     compile 'com.facebook.stetho:stetho:1.+'
     compile 'com.facebook.stetho:stetho-okhttp3:1.+'
+    //下拉刷新
+    compile 'in.srain.cube:ultra-ptr:1.0.11'
 }

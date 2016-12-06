@@ -14,5 +14,5 @@ public interface TestService {
     Call<String> getContent(@Path("article") String article);
 
     @GET("docs/0.38/{article}")
-    Observable<String> getContentRx(@Path("article") String article);
+    Observable<String> rxGetContent(@Path("article") String article);
 }

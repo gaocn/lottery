@@ -52,8 +52,6 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        //RxView.
-
         initData();
         showHint();
     }
@@ -86,7 +84,6 @@ public class MainActivity extends BaseActivity {
         });
     }
     private void initData() {
-        retrofitTest();
     }
 
     private void retrofitTest() {
@@ -115,7 +112,7 @@ public class MainActivity extends BaseActivity {
             }
         });*/
 
-        Observable<String> observable = testService.getContentRx("getting-started.html");
+        Observable<String> observable = testService.rxGetContent("getting-started.html");
         observable.observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<String>() {
             @Override
             public void onCompleted() {
@@ -134,8 +131,6 @@ public class MainActivity extends BaseActivity {
             }
         });
     }
-
-
 
     private void rxJavaTest() {
 
@@ -179,4 +174,5 @@ public class MainActivity extends BaseActivity {
         };
         observable.subscribe(onNextAction, onErrorAction, onCompleteAction);
     }
+
 }

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="TitleBar">
+        <attr name="allBag" format="reference" />
+        <attr name="leftBag" format="reference" />
+        <attr name="imgBag" format="reference" />
+        <attr name="tagColor" format="color" />
+        <attr name="opColor" format="color" />
+
+        <attr name="tagSize" format="dimension" />
+        <attr name="opSize" format="dimension" />
+        <attr name="allSize" format="dimension" />
+
+        <attr name="tagStr" format="string" />
+        <attr name="opStr" format="string" />
+
+        <attr name="imgVisible" format="boolean" />
+        <attr name="opVisible" format="boolean" />
+        <attr name="tvVisible" format="boolean" />
+        <attr name="lineVisible" format="boolean" />
+    </declare-styleable>
+
+</resources>
