@@ -9,6 +9,14 @@ import com.litesuits.orm.LiteOrm;
 
 import gww.lottery.config.PropertiesManager;
 import gww.lottery.config.SharedPreferenceManager;
+import gww.lottery.image.DemoDuiTangImageReSizer;
+import gww.lottery.image.PtrImageLoadHandler;
+import in.srain.cube.Cube;
+import in.srain.cube.image.ImageLoaderFactory;
+import in.srain.cube.request.RequestCacheManager;
+import in.srain.cube.util.CLog;
+import in.srain.cube.util.CubeDebug;
+import in.srain.cube.views.ptr.PtrFrameLayout;
 
 /**
  * Created by 高文文 on 2016/12/1.
@@ -40,8 +48,35 @@ public class App extends Application {
          */
         Log.d(TAG, "onCreate: 初始化Stetho，可以通过Chrom查看应用布局，网络请求，sqlite，sharepreference");
         Stetho.initializeWithDefaults(this);
-
         LotteryRetrofit.init();
+
+
+        /**
+         * Cube初始化
+         */
+        Log.d(TAG, "onCreate: 初始化Cube");
+        String environment = "";
+
+        if (environment.equals("production")) {
+            CLog.setLogLevel(CLog.LEVEL_ERROR);
+        } else if (environment.equals("beta")) {
+            CLog.setLogLevel(CLog.LEVEL_WARNING);
+        } else {
+            // development
+            CLog.setLogLevel(CLog.LEVEL_VERBOSE);
+        }
+
+        CubeDebug.DEBUG_IMAGE = true;
+        PtrFrameLayout.DEBUG = true;
+        PtrFrameLayout.DEBUG = false;
+
+        ImageLoaderFactory.setDefaultImageReSizer(DemoDuiTangImageReSizer.getInstance());
+        ImageLoaderFactory.setDefaultImageLoadHandler(new PtrImageLoadHandler());
+        String dir = "request-cache";
+        // ImageLoaderFactory.init(this);
+        RequestCacheManager.init(this, dir, 1024 * 10, 1024 * 10);
+        Cube.onCreate(this);
+
         super.onCreate();
     }
 }
