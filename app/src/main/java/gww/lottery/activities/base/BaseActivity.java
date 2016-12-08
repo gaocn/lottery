@@ -1,7 +1,11 @@
 package gww.lottery.activities.base;
 
+import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Window;
+import android.view.WindowManager;
 
 import rx.Subscription;
 import rx.subscriptions.CompositeSubscription;
@@ -30,7 +34,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
         mCompositeSubscription.add(subscription);
     }
-
 
     @Override
     protected void onDestroy() {

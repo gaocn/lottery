@@ -49,7 +49,8 @@ public interface GankApi {
     Call<GankData> getGankData(@Path("year") int year, @Path("month") int month, @Path("day") int day);
     @GET("day/{year}/{month}/{day}")
     Observable<GankData> getGankDataRx(@Path("year") int year, @Path("month") int month, @Path("day") int day);
-
+    @GET("day/{year}/{month}/{day}")
+    Call<String> getGankJSON(@Path("year") int year, @Path("month") int month, @Path("day") int day);
     /**
      * 获取发过干货日期
      * http://gank.io/api/day/history
@@ -81,4 +82,13 @@ public interface GankApi {
     Call<GankData> randomGankData(@Path("category") String category);
     @GET("day/history")
     Observable<GankData> randomGankDataRx(@Path("category") String category);
+
+    /**
+     * http://gank.io/api/data/%E7%9E%8E%E6%8E%A8%E8%8D%90/10/1
+     * 瞎推荐
+     */
+    @GET("data/%E7%9E%8E%E6%8E%A8%E8%8D%90/" + SIZE + "/{page}")
+    Call<String> recommendGankData(@Path("page") int page);
+    @GET("day/history")
+    Observable<String> recommendGankDataRx(@Path("page") int pagey);
 }

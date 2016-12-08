@@ -1,7 +1,7 @@
-package gww.lottery.activities.base;
+package gww.lottery.activities;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -9,12 +9,13 @@ import android.webkit.WebViewClient;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import gww.lottery.R;
+import gww.lottery.activities.base.BaseActivity;
 import in.srain.cube.views.ptr.PtrClassicFrameLayout;
 import in.srain.cube.views.ptr.PtrDefaultHandler;
 import in.srain.cube.views.ptr.PtrFrameLayout;
 import in.srain.cube.views.ptr.PtrHandler;
 
-public class WebViewActivity extends AppCompatActivity {
+public class WebViewActivity extends BaseActivity {
     private static final String TAG = "WebViewActivity";
     @BindView(R.id.rotate_header_web_view)
     WebView mWebView;
@@ -63,6 +64,9 @@ public class WebViewActivity extends AppCompatActivity {
         }, 100);
     }
     private void updateData() {
-        mWebView.loadUrl("http://www.govind.space/");
+        String url = getIntent().getStringExtra("url");
+        if(!TextUtils.isEmpty(url)) {
+            mWebView.loadUrl(url);
+        }
     }
 }

@@ -22,7 +22,6 @@ import butterknife.OnItemClick;
 import gww.lottery.LotteryRetrofit;
 import gww.lottery.R;
 import gww.lottery.activities.base.BaseActivity;
-import gww.lottery.activities.base.WebViewActivity;
 import gww.lottery.data.GankData;
 import gww.lottery.data.MeiZhiData;
 import gww.lottery.data.RespiteData;

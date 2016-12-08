@@ -6,13 +6,13 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import gww.lottery.R;
+import gww.lottery.activities.base.BaseActivity;
 import gww.lottery.header.RentalsSunHeaderView;
 import gww.lottery.ui.TitleBar;
 import in.srain.cube.image.CubeImageView;
@@ -24,7 +24,7 @@ import in.srain.cube.util.LocalDisplay;
 import in.srain.cube.views.ptr.PtrFrameLayout;
 import in.srain.cube.views.ptr.PtrHandler;
 
-public class RentalsStyleImageActivity extends AppCompatActivity {
+public class RentalsStyleImageActivity extends BaseActivity {
     private static final String TAG = "RentalsStyleImageActivi";
     @BindView(R.id.title_bar)
     TitleBar mTitleBar;

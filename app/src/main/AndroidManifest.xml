@@ -17,14 +17,11 @@
         <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait">
-
-            <!--
-                <intent-filter>
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            -->
         </activity>
         <activity
             android:name=".activities.SplashActivity"
@@ -39,14 +36,14 @@
             -->
         </activity>
         <activity android:name=".activities.GankActivity">
-            <intent-filter>
+<!--            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            </intent-filter>-->
         </activity>
         <activity android:name=".activities.RentalsStyleImageActivity" />
-        <activity android:name=".activities.base.WebViewActivity"></activity>
+        <activity android:name=".activities.WebViewActivity"></activity>
     </application>
 
 </manifest>
