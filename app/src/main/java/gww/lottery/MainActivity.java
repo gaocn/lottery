@@ -44,10 +44,10 @@ public class MainActivity extends BaseActivity {
         fragments.add(new FuLiFragment());
         fragments.add(new FuLiFragment());
         List<String> titles = new ArrayList<>();
-        titles.add("文章");
+        titles.add("推荐");
         titles.add("视频");
         titles.add("福利");
-        titles.add("统计");
+        titles.add("发现");
         titles.add("更多");
 
         FragmentAdapter adapter = new FragmentAdapter(getSupportFragmentManager(), fragments, titles);
@@ -58,19 +58,19 @@ public class MainActivity extends BaseActivity {
             Drawable draw = null;
             switch (i) {
                 case 0:
-                    draw = getResources().getDrawable(R.drawable.selector_home);
+                    draw = getResources().getDrawable(R.drawable.selector_tuijian);
                     break;
                 case 1:
                     draw = getResources().getDrawable(R.drawable.selector_tongji);
                     break;
                 case 2:
-                    draw = getResources().getDrawable(R.drawable.selector_mine);
+                    draw = getResources().getDrawable(R.drawable.selector_fuli);
                     break;
                 case 3:
-                    draw = getResources().getDrawable(R.drawable.selector_tongji);
+                    draw = getResources().getDrawable(R.drawable.selector_faxian);
                     break;
                 case 4:
-                    draw = getResources().getDrawable(R.drawable.selector_tongji);
+                    draw = getResources().getDrawable(R.drawable.selector_more);
                     break;
             }
             tab.setIcon(draw);
