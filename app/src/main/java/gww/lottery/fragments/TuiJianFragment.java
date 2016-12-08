@@ -106,7 +106,7 @@ public class TuiJianFragment extends Fragment {
     protected void updateData() {
         Calendar calendae = GregorianCalendar.getInstance();
         int year = calendae.get(Calendar.YEAR);
-        int month = calendae.get(Calendar.MONTH);
+        int month = calendae.get(Calendar.MONTH) + 1;
         int day = calendae.get(Calendar.DAY_OF_MONTH);
         Log.d(TAG, "updateData: 推荐今天 "  + year + "年" + month + "月" + day + "天的数据");
         GankApi gank = LotteryRetrofit.retrofit.create(GankApi.class);
@@ -123,11 +123,12 @@ public class TuiJianFragment extends Fragment {
                             mAdapter.getDataList().clear();
                             JsonData jsonData = JsonData.create(response.body());
                             ArrayList<JsonData> lists = new ArrayList<>();
-                            lists.addAll(jsonData.optJson("results").optJson("IOS").toArrayList());
                             lists.addAll(jsonData.optJson("results").optJson("Android").toArrayList());
+                            lists.addAll(jsonData.optJson("results").optJson("iOS").toArrayList());
                             lists.addAll(jsonData.optJson("results").optJson("前端").toArrayList());
                             lists.addAll(jsonData.optJson("results").optJson("瞎推荐").toArrayList());
                             lists.addAll(jsonData.optJson("results").optJson("休息视频").toArrayList());
+                            Log.d(TAG, "run: 总共的数据 " + lists.size() +  " " + lists);
                             mAdapter.getDataList().addAll(lists);
                             ptrFrame.refreshComplete();
                             mAdapter.notifyDataSetChanged();
@@ -168,6 +169,7 @@ public class TuiJianFragment extends Fragment {
                 }
                 mDesc.setText(itemData.optString("desc"));
             } catch (JSONException e) {
+                Log.d(TAG, "showData: 没有图片的文章");
                 mImageView.setImageResource(R.drawable.buildings);
                 mDesc.setText(itemData.optString("desc"));
             }
