@@ -26,8 +26,8 @@ public class App extends Application {
     private static final String TAG = "gww.lottery.App";
     private static final String DB_NAME = "lattery.db";
 
-    public Context mContext;
-    public LiteOrm liteOrm;
+    public static Context mContext;
+    public static LiteOrm liteOrm;
 
     private void initLiteOrm() {
         Log.d(TAG, "initLiteOrm: 初始化数据库");

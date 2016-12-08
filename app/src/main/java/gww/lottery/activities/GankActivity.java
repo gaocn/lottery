@@ -2,6 +2,7 @@ package gww.lottery.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,6 +12,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import com.google.gson.Gson;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -25,12 +28,10 @@ import gww.lottery.data.MeiZhiData;
 import gww.lottery.data.RespiteData;
 import gww.lottery.restful.service.GankApi;
 import gww.lottery.ui.TitleBar;
-import gww.lottery.image.RequestImagesUtil;
 import in.srain.cube.image.CubeImageView;
 import in.srain.cube.image.ImageLoader;
 import in.srain.cube.image.ImageLoaderFactory;
 import in.srain.cube.request.JsonData;
-import in.srain.cube.request.RequestFinishHandler;
 import in.srain.cube.views.list.ListViewDataAdapter;
 import in.srain.cube.views.list.ViewHolderBase;
 import in.srain.cube.views.ptr.PtrClassicFrameLayout;
@@ -130,20 +131,36 @@ public class GankActivity extends BaseActivity {
     }
 
     protected void updateData() {
-        RequestImagesUtil.getImageList(new RequestFinishHandler<JsonData>() {
+
+        GankApi gank = LotteryRetrofit.retrofit.create(GankApi.class);
+        Call<MeiZhiData> call = gank.getMeiZhiData(mPage);
+        call.enqueue(new Callback<MeiZhiData>() {
             @Override
-            public void onRequestFinish(final JsonData data) {
+            public void onResponse(Call<MeiZhiData> call, final Response<MeiZhiData> response) {
+                final MeiZhiData data = response.body();
+                Log.d(TAG, "onResponse: "
+                        + response.body());
                 ptrFrame.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         mAdapter.getDataList().clear();
-                        mAdapter.getDataList().addAll(data.optJson("data").optJson("list").toArrayList());
+
+                        JsonData jsonData = JsonData.create(new Gson().toJson(data));
+                        Log.d(TAG, "run: jsonData " + jsonData.optString("error"));
+                        mAdapter.getDataList().addAll(jsonData.optJson("results").toArrayList());
                         ptrFrame.refreshComplete();
                         mAdapter.notifyDataSetChanged();
                     }
                 }, 0);
             }
+
+            @Override
+            public void onFailure(Call<MeiZhiData> call, Throwable t) {
+                t.printStackTrace();
+            }
         });
+
+
     }
 
     private class ViewHolder extends ViewHolderBase<JsonData> {
@@ -159,7 +176,8 @@ public class GankActivity extends BaseActivity {
 
         @Override
         public void showData(int position, JsonData itemData) {
-            mImageView.loadImage(mImageLoader, itemData.optString("pic"));
+            Log.d(TAG, "showData: itemData" + itemData.optString("url") + " " + itemData);
+            mImageView.loadImage(mImageLoader, itemData.optString("url"));
         }
     }
 
@@ -208,5 +226,30 @@ public class GankActivity extends BaseActivity {
                 t.printStackTrace();
             }
         });
+    }
+
+
+    /**
+     * 双击后退出
+     */
+
+    long[] hits = new long[2];
+    private boolean doubleClicked() {
+        System.arraycopy(hits, 1, hits, 0, hits.length - 1);
+        hits[hits.length - 1] = SystemClock.uptimeMillis();
+        if(SystemClock.uptimeMillis() - hits[0] < 1000) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(doubleClicked()) {
+            finish();
+        } else {
+            Toast.makeText(this, "再一次单击后退出应用", Toast.LENGTH_SHORT).show();
+        }
+//        super.onBackPressed();
     }
 }
