@@ -6,11 +6,11 @@
     android:layout_height="match_parent">
     <gww.lottery.ui.TitleBar
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="wrap_content"
         app:tagStr="福利"
         app:tagColor="@color/white"
         app:tagSize="12sp"
-        app:allBag="@color/colorPrimaryDark"
+        app:allBag="@color/colorPrimary"
         />
 
     <in.srain.cube.views.ptr.PtrClassicFrameLayout

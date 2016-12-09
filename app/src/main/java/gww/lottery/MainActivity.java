@@ -11,6 +11,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import gww.lottery.fragments.AboutFragment;
 import gww.lottery.activities.base.BaseActivity;
 import gww.lottery.adapter.FragmentAdapter;
 import gww.lottery.fragments.FuLiFragment;
@@ -42,7 +43,7 @@ public class MainActivity extends BaseActivity {
         fragments.add(new FuLiFragment());
         fragments.add(new FuLiFragment());
         fragments.add(new FuLiFragment());
-        fragments.add(new FuLiFragment());
+        fragments.add(new AboutFragment());
         List<String> titles = new ArrayList<>();
         titles.add("推荐");
         titles.add("视频");

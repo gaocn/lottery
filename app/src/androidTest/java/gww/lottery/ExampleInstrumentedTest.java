@@ -22,5 +22,10 @@ public class ExampleInstrumentedTest {
         Context appContext = InstrumentationRegistry.getTargetContext();
 
         assertEquals("gww.lottery", appContext.getPackageName());
+
+    }
+    @Test
+    public void clearDB() {
+        App.liteOrm.deleteDatabase();
     }
 }

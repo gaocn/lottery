@@ -3,7 +3,6 @@ package gww.lottery.fragments;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,19 +14,26 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.litesuits.orm.db.model.ConflictAlgorithm;
+
 import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.GregorianCalendar;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnItemClick;
+import gww.lottery.App;
 import gww.lottery.LotteryRetrofit;
 import gww.lottery.R;
 import gww.lottery.activities.WebViewActivity;
+import gww.lottery.data.GankData;
+import gww.lottery.data.entity.Gank;
 import gww.lottery.restful.service.GankApi;
+import gww.lottery.utils.NetworkUtils;
 import in.srain.cube.image.CubeImageView;
 import in.srain.cube.image.ImageLoader;
 import in.srain.cube.image.ImageLoaderFactory;
@@ -42,11 +48,13 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static gww.lottery.App.liteOrm;
+
 /**
  * Created by 高文文 on 2016/12/8.
  */
 
-public class TuiJianFragment extends Fragment {
+public class TuiJianFragment extends BaseFragment {
     private static final String TAG = "TuiJianFragment";
     @BindView(R.id.store_house_ptr_frame)
     PtrClassicFrameLayout ptrFrame;
@@ -103,49 +111,121 @@ public class TuiJianFragment extends Fragment {
         }
     }
 
+    /**
+     * 每日推荐数据
+     */
+    private GankData gankData;
+
     protected void updateData() {
-        Calendar calendae = GregorianCalendar.getInstance();
-        int year = calendae.get(Calendar.YEAR);
-        int month = calendae.get(Calendar.MONTH) + 1;
-        int day = calendae.get(Calendar.DAY_OF_MONTH);
-        Log.d(TAG, "updateData: 推荐今天 "  + year + "年" + month + "月" + day + "天的数据");
-        GankApi gank = LotteryRetrofit.retrofit.create(GankApi.class);
-        Call<String> call = gank.getGankJSON(year, month, day);
-        call.enqueue(new Callback<String>() {
-            @Override
-            public void onResponse(Call<String> call, final Response<String> response) {
-                Log.d(TAG, "onResponse: "
-                        + response.body());
-                if(response.code() == 200) {
-                    ptrFrame.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            mAdapter.getDataList().clear();
-                            JsonData jsonData = JsonData.create(response.body());
-                            ArrayList<JsonData> lists = new ArrayList<>();
-                            lists.addAll(jsonData.optJson("results").optJson("Android").toArrayList());
-                            lists.addAll(jsonData.optJson("results").optJson("iOS").toArrayList());
-                            lists.addAll(jsonData.optJson("results").optJson("前端").toArrayList());
-                            lists.addAll(jsonData.optJson("results").optJson("瞎推荐").toArrayList());
-                            lists.addAll(jsonData.optJson("results").optJson("休息视频").toArrayList());
-                            Log.d(TAG, "run: 总共的数据 " + lists.size() +  " " + lists);
-                            mAdapter.getDataList().addAll(lists);
-                            ptrFrame.refreshComplete();
-                            mAdapter.notifyDataSetChanged();
-                        }
-                    }, 0);
-                } else {
-                    Toast.makeText(getContext(), "今天没有推荐内容，显示昨天的", Toast.LENGTH_SHORT).show();
-                    //TODO
+        if(NetworkUtils.isWiFiConnected(getContext())) {
+            Log.d(TAG, "updateData: 使用WiFi联网");
+            Calendar calendae = Calendar.getInstance(Locale.CHINA);
+            int year = calendae.get(Calendar.YEAR);
+            int month = calendae.get(Calendar.MONTH) + 1;
+            int day = calendae.get(Calendar.DATE);
+            Log.d(TAG, "updateData: 推荐今天 "  + year + "年" + month + "月" + day + "日的数据");
+            final GankApi gank = LotteryRetrofit.retrofit.create(GankApi.class);
+            Call<GankData> call = gank.getGankData(year, month, day);
+            call.enqueue(new Callback<GankData>() {
+                @Override
+                public void onResponse(Call<GankData> call, final Response<GankData> response) {
+                    Log.d(TAG, "onResponse: " + response.body());
+                        gankData = response.body();
+                        if(!gankData.category.isEmpty()) {
+                            clearAndUpdateDB(gankData);
+                            showData();
+                    } else {
+                        Toast.makeText(getContext(), "今天没有推荐内容，显示昨天的", Toast.LENGTH_SHORT).show();
+
+                    }
                 }
-            }
 
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
+                @Override
+                public void onFailure(Call<GankData> call, Throwable t) {
+                    t.printStackTrace();
+                }
+            });
 
-            }
-        });
+        } else {
+            Toast.makeText(getContext(), "没有联网", Toast.LENGTH_SHORT).show();
+            final ArrayList<Gank> gankArrayList = App.liteOrm.query(Gank.class);
+            ptrFrame.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mAdapter.getDataList().clear();
+                    JsonData jsonData = JsonData.create(new Gson().toJson(gankArrayList));
+                    ArrayList<JsonData> lists = new ArrayList<>();
+                    Log.d(TAG, "run: JSONData " + jsonData.toArrayList());
+                    mAdapter.getDataList().addAll(jsonData.toArrayList());
+                    ptrFrame.refreshComplete();
+                    mAdapter.notifyDataSetChanged();
+                }
+            }, 0);
+        }
+
     }
+
+    private void clearAndUpdateDB(GankData gankData) {
+        //清空表中数据，并存放最新一期的数据
+        liteOrm.deleteAll(Gank.class);
+        try {
+            for(Gank gank : gankData.getResults().getAndroidList()) {
+                App.liteOrm.insert(gank, ConflictAlgorithm.Replace);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            for(Gank gank : gankData.getResults().getiOSList()) {
+                App.liteOrm.insert(gank, ConflictAlgorithm.Replace);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
+            for(Gank gank : gankData.getResults().get休息视频List()) {
+                App.liteOrm.insert(gank, ConflictAlgorithm.Replace);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            for(Gank gank : gankData.getResults().get前端List()) {
+                App.liteOrm.insert(gank, ConflictAlgorithm.Replace);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            for(Gank gank : gankData.getResults().get瞎推荐List()) {
+                App.liteOrm.insert(gank, ConflictAlgorithm.Replace);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Log.d(TAG, "clearAndUpdateDB: 删除并且存放最新一期的数据");
+    }
+    private void showData() {
+        ptrFrame.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mAdapter.getDataList().clear();
+                JsonData jsonData = JsonData.create(new Gson().toJson(gankData));
+                ArrayList<JsonData> lists = new ArrayList<>();
+                lists.addAll(jsonData.optJson("results").optJson("Android").toArrayList());
+                lists.addAll(jsonData.optJson("results").optJson("iOS").toArrayList());
+                lists.addAll(jsonData.optJson("results").optJson("前端").toArrayList());
+                lists.addAll(jsonData.optJson("results").optJson("瞎推荐").toArrayList());
+                lists.addAll(jsonData.optJson("results").optJson("休息视频").toArrayList());
+                Log.d(TAG, "run: 总共的数据 " + lists.size() +  " " + lists);
+                mAdapter.getDataList().addAll(lists);
+                ptrFrame.refreshComplete();
+                mAdapter.notifyDataSetChanged();
+            }
+        }, 0);
+    }
+
     private class ViewHolder extends ViewHolderBase<JsonData> {
         private CubeImageView mImageView;
         private TextView mDesc;

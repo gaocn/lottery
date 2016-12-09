@@ -9,10 +9,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 
@@ -24,6 +26,7 @@ import gww.lottery.R;
 import gww.lottery.activities.RentalsStyleImageActivity;
 import gww.lottery.data.MeiZhiData;
 import gww.lottery.restful.service.GankApi;
+import gww.lottery.utils.NetworkUtils;
 import in.srain.cube.image.CubeImageView;
 import in.srain.cube.image.ImageLoader;
 import in.srain.cube.image.ImageLoaderFactory;
@@ -86,6 +89,25 @@ public class FuLiFragment extends Fragment {
         mAdapter.setViewHolderClass(this, ViewHolder.class);
         mGridView.setAdapter(mAdapter);
 
+        mGridView.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                //滚动时一直回调，直到停止滚动时才停止回调。单击时回调一次。
+                //firstVisibleItem：当前能看见的第一个列表项ID（从0开始）
+                //visibleItemCount：当前能看见的列表项个数（小半个也算）
+                //totalItemCount：列表项共数
+                //判断是否滚到最后一行
+                if (firstVisibleItem + visibleItemCount == totalItemCount && totalItemCount > 0) {
+                    updateData();
+                }
+            }
+        });
+
         return view;
     }
 
@@ -108,36 +130,42 @@ public class FuLiFragment extends Fragment {
      */
     private int mPage;
     protected void updateData() {
-        mPage++;
-        GankApi gank = LotteryRetrofit.retrofit.create(GankApi.class);
-        Call<MeiZhiData> call = gank.getMeiZhiData(mPage);
-        call.enqueue(new Callback<MeiZhiData>() {
-            @Override
-            public void onResponse(Call<MeiZhiData> call, final Response<MeiZhiData> response) {
-                final MeiZhiData data = response.body();
-                Log.d(TAG, "onResponse: "
-                        + response.body());
-                ptrFrame.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        if(mPage > 5) {
-                            mAdapter.getDataList().clear();
-                            mPage = 0;
+        if(NetworkUtils.isWiFiConnected(getContext())) {
+            mPage++;
+            GankApi gank = LotteryRetrofit.retrofit.create(GankApi.class);
+            Call<MeiZhiData> call = gank.getMeiZhiData(mPage);
+            call.enqueue(new Callback<MeiZhiData>() {
+                @Override
+                public void onResponse(Call<MeiZhiData> call, final Response<MeiZhiData> response) {
+                    final MeiZhiData data = response.body();
+                    Log.d(TAG, "onResponse: "
+                            + response.body());
+                    ptrFrame.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (mPage > 5) {
+                                mAdapter.getDataList().clear();
+                                mPage = 0;
+                            }
+                            JsonData jsonData = JsonData.create(new Gson().toJson(data));
+                            //                        Log.d(TAG, "run: jsonData " + jsonData.optString("error"));
+                            mAdapter.getDataList().addAll(jsonData.optJson("results").toArrayList());
+                            ptrFrame.refreshComplete();
+                            mAdapter.notifyDataSetChanged();
                         }
-                        JsonData jsonData = JsonData.create(new Gson().toJson(data));
-//                        Log.d(TAG, "run: jsonData " + jsonData.optString("error"));
-                        mAdapter.getDataList().addAll(jsonData.optJson("results").toArrayList());
-                        ptrFrame.refreshComplete();
-                        mAdapter.notifyDataSetChanged();
-                    }
-                }, 0);
-            }
+                    }, 0);
+                }
 
-            @Override
-            public void onFailure(Call<MeiZhiData> call, Throwable t) {
-                t.printStackTrace();
-            }
-        });
+                @Override
+                public void onFailure(Call<MeiZhiData> call, Throwable t) {
+                    t.printStackTrace();
+                }
+            });
+        } else {
+            //加载缓存中的图片
+            Toast.makeText(getContext(), "没有联网，加载缓存中的图片", Toast.LENGTH_SHORT).show();
+            ptrFrame.refreshComplete();
+        }
     }
     private class ViewHolder extends ViewHolderBase<JsonData> {
         private CubeImageView mImageView;

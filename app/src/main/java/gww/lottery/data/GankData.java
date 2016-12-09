@@ -2,6 +2,10 @@ package gww.lottery.data;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.litesuits.orm.db.annotation.Column;
+import com.litesuits.orm.db.annotation.PrimaryKey;
+import com.litesuits.orm.db.annotation.Table;
+import com.litesuits.orm.db.enums.AssignType;
 
 import java.util.List;
 
@@ -11,13 +15,22 @@ import gww.lottery.data.entity.Gank;
  * Created by 高文文 on 2016/12/6.
  */
 
+@Table("gankdata")
 public class GankData {
+
+    @PrimaryKey(AssignType.AUTO_INCREMENT)
+    @Column("id")
+    private long id;
+
+    @Column("error")
     @SerializedName("error")
     @Expose
     private Boolean error;
+    @Column("results")
     @SerializedName("results")
     @Expose
     public Result results;
+    @Column("category")
     @SerializedName("category")
     @Expose
     public List<String> category;
@@ -32,14 +45,14 @@ public class GankData {
         @SerializedName("前端")
         @Expose
         public List<Gank> 前端List;
-        @SerializedName("福利")
-        @Expose
-        public List<Gank> 妹纸List;
+
         @SerializedName("休息视频")
         @Expose
         public List<Gank> 休息视频List;
-//        @SerializedName("拓展资源") public List<Gank> 拓展资源List;
-//        @SerializedName("瞎推荐") public List<Gank> 瞎推荐List;
+
+        @SerializedName("瞎推荐")
+        @Expose
+        public List<Gank> 瞎推荐List;
 
         @Override
         public String toString() {
@@ -47,7 +60,7 @@ public class GankData {
                     "androidList=" + androidList +
                     ", iOSList=" + iOSList +
                     ", 前端List=" + 前端List +
-                    ", 妹纸List=" + 妹纸List +
+                    ", 瞎推荐List=" + 瞎推荐List +
                     ", 休息视频List=" + 休息视频List +
                     '}';
         }
@@ -68,20 +81,12 @@ public class GankData {
             this.iOSList = iOSList;
         }
 
-        public List<Gank> getAppList() {
+        public List<Gank> get前端List() {
             return 前端List;
         }
 
-        public void setAppList(List<Gank> appList) {
-            this.前端List = appList;
-        }
-
-        public List<Gank> get妹纸List() {
-            return 妹纸List;
-        }
-
-        public void set妹纸List(List<Gank> 妹纸List) {
-            this.妹纸List = 妹纸List;
+        public void set前端List(List<Gank> 前端List) {
+            this.前端List = 前端List;
         }
 
         public List<Gank> get休息视频List() {
@@ -90,6 +95,14 @@ public class GankData {
 
         public void set休息视频List(List<Gank> 休息视频List) {
             this.休息视频List = 休息视频List;
+        }
+
+        public List<Gank> get瞎推荐List() {
+            return 瞎推荐List;
+        }
+
+        public void set瞎推荐List(List<Gank> 瞎推荐List) {
+            this.瞎推荐List = 瞎推荐List;
         }
     }
 

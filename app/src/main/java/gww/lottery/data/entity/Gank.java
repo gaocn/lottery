@@ -10,6 +10,7 @@ import com.litesuits.orm.db.annotation.Unique;
 import com.litesuits.orm.db.enums.AssignType;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Created by 高文文 on 2016/12/6.
@@ -56,6 +57,11 @@ public class Gank implements Serializable {
     @SerializedName("url")
     @Expose
     private String url;
+
+    @Column("images")
+    @SerializedName("images")
+    @Expose
+    private List<String> images;
 
     @Column("used")
     @SerializedName("used")
@@ -146,4 +152,28 @@ public class Gank implements Serializable {
         this.who = who;
     }
 
+    public List<String> getImages() {
+        return images;
+    }
+
+    public void setImages(List<String> images) {
+        this.images = images;
+    }
+
+    @Override
+    public String toString() {
+        return "Gank{" +
+                "id=" + id +
+                ", objectId='" + objectId + '\'' +
+                ", createdAt='" + createdAt + '\'' +
+                ", desc='" + desc + '\'' +
+                ", publishedAt='" + publishedAt + '\'' +
+                ", source='" + source + '\'' +
+                ", type='" + type + '\'' +
+                ", url='" + url + '\'' +
+                ", images=" + images +
+                ", used=" + used +
+                ", who='" + who + '\'' +
+                '}';
+    }
 }
