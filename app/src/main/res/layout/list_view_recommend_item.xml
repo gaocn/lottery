@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!--<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-        <RelativeLayout
+    android:layout_height="match_parent">-->
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_marginBottom="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -24,9 +24,15 @@
                 android:paddingLeft="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@android:color/black"
+                android:textColor="@color/title_text_blue"
                 android:text="我是描述"
                 />
-
+            <gww.lottery.ui.LinkShareBar
+                android:id="@+id/lsb_bar"
+                android:layout_toRightOf="@id/list_view_item_image_view"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="6dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
         </RelativeLayout>
-</FrameLayout>
+<!--</FrameLayout>-->

@@ -33,6 +33,7 @@ import gww.lottery.activities.WebViewActivity;
 import gww.lottery.data.GankData;
 import gww.lottery.data.entity.Gank;
 import gww.lottery.restful.service.GankApi;
+import gww.lottery.ui.LinkShareBar;
 import gww.lottery.utils.NetworkUtils;
 import in.srain.cube.image.CubeImageView;
 import in.srain.cube.image.ImageLoader;
@@ -229,13 +230,14 @@ public class TuiJianFragment extends BaseFragment {
     private class ViewHolder extends ViewHolderBase<JsonData> {
         private CubeImageView mImageView;
         private TextView mDesc;
-
+        private LinkShareBar linkShareBar;
         @Override
         public View createView(LayoutInflater inflater) {
             View v = inflater.inflate(R.layout.list_view_recommend_item, null);
             mImageView = (CubeImageView) v.findViewById(R.id.list_view_item_image_view);
             mImageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
             mDesc = (TextView) v.findViewById(R.id.tv_desc);
+            linkShareBar = (LinkShareBar) v.findViewById(R.id.lsb_bar);
             return v;
         }
 
@@ -248,6 +250,27 @@ public class TuiJianFragment extends BaseFragment {
                     mImageView.loadImage(mImageLoader, itemData.optJson("images").optArrayOrNew().getString(0));
                 }
                 mDesc.setText(itemData.optString("desc"));
+                linkShareBar.setListener(new LinkShareBar.OnTagClickListener() {
+                    @Override
+                    public void onShareTagClick(View view) {
+                        Toast.makeText(getContext(), "Share点击了", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onCommentTagClick(View view) {
+                        Toast.makeText(getContext(), "Comment点击了", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onLinkTagClick(View view) {
+                        Toast.makeText(getContext(), "Link点击了", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onTypeTagClick(View view) {
+                        Toast.makeText(getContext(), "Tag点击了", Toast.LENGTH_SHORT).show();
+                    }
+                });
             } catch (JSONException e) {
                 Log.d(TAG, "showData: 没有图片的文章");
                 mImageView.setImageResource(R.drawable.buildings);
